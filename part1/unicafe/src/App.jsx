@@ -6,6 +6,12 @@ const FeedbackButton = ({ handleClick, text }) => (
   </button>
 )
 
+const StatisticsLine = ({ text, value }) => {
+  return (
+    <p>{text} {value}</p>
+  )
+}
+
 const Statistics = ({ good, neutral, bad }) => {
   const count = good + neutral + bad
 
@@ -19,13 +25,12 @@ const Statistics = ({ good, neutral, bad }) => {
 
   return (
     <>
-      <p>Good: {good}</p>
-      <p>Neutral: {neutral}</p>
-      <p>Bad: {bad}</p>
-
-      <p>Feedback count: {count}</p>
-      <p>Share of positive feedback: {(good / (count) * 100).toFixed(2)}%</p>
-      <p>Average score: {((good * 1 + bad * (-1)) / count).toFixed(2)}</p>
+      <StatisticsLine text={"Good:"} value={good} />
+      <StatisticsLine text={"Neutral:"} value={neutral} />
+      <StatisticsLine text={"Bad:"} value={bad} />
+      <StatisticsLine text={"Feedback count:"} value={count} />
+      <StatisticsLine text={"Share of positive feedback (%):"} value={(good / (count) * 100).toFixed(2)} />
+      <StatisticsLine text={"Average score:"} value={((good * 1 + bad * (-1)) / count).toFixed(2)} />
     </>
   )
 }
