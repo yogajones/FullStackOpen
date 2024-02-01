@@ -7,12 +7,27 @@ const FeedbackButton = ({ handleClick, text }) => (
 )
 
 const Statistics = ({ good, neutral, bad }) => {
-  return (<>
-    <h1>Statistics</h1>
-    <p>Good: {good}</p>
-    <p>Neutral: {neutral}</p>
-    <p>Bad: {bad}</p>
-  </>)
+  const count = good + neutral + bad
+
+  if (count === 0) {
+    return (
+      <>
+        <p>No feedback given yet.</p>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <p>Good: {good}</p>
+      <p>Neutral: {neutral}</p>
+      <p>Bad: {bad}</p>
+
+      <p>Feedback count: {count}</p>
+      <p>Share of positive feedback: {(good / (count) * 100).toFixed(2)}%</p>
+      <p>Average score: {((good * 1 + bad * (-1)) / count).toFixed(2)}</p>
+    </>
+  )
 }
 
 const App = () => {
@@ -26,6 +41,7 @@ const App = () => {
       <FeedbackButton handleClick={() => setGood(good + 1)} text={"GOOD"} />
       <FeedbackButton handleClick={() => setNeutral(neutral + 1)} text={"NEUTRAL"} />
       <FeedbackButton handleClick={() => setBad(bad + 1)} text={"BAD"} />
+      <h1>Statistics</h1>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
   )
