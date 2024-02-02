@@ -1,4 +1,4 @@
-const Header = ({ name }) => (<h1>{name}</h1>)
+const Header = ({ name }) => (<h2>{name}</h2>)
 
 const Part = ({ part }) => (
     <p key={part.id}>{part.name} {part.exercises}</p>
@@ -14,7 +14,7 @@ const Total = ({ parts }) => {
     const total = parts.reduce((sum, part) => { return sum + part.exercises }, 0)
     return (
         <div>
-            <p>Total of {total} exercises</p>
+            <b>Total of {total} exercises</b>
         </div>
     )
 }
