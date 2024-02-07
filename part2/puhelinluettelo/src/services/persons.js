@@ -6,8 +6,13 @@ const getAll = () => {
 }
 
 const create = (newPerson) => {
-    console.log(newPerson);
     return axios.post(baseUrl, newPerson).then(response => response.data)
 }
 
-export default { getAll, create }
+const deletePerson = (id) => {
+    return axios.delete(baseUrl + '/' + id)
+        .then(console.log(`Succesfully deleted person with id: ${id}`))
+        .catch(error => console.log(`Failed to delete person with id: ${id}`, error))
+}
+
+export default { getAll, create, deletePerson }
