@@ -3,11 +3,15 @@ import NewPersonForm from './components/NewPersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import personService from './services/persons'
+import SuccessNotification from './components/SuccessNotification'
+import './styles/index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const [filter, setFilter] = useState('')
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
@@ -21,17 +25,19 @@ const App = () => {
   }, [])
 
   const updateNumber = (personObject) => {
-    if (window.confirm(`${personObject.name} is already added to phonebook, replace the older number with a new one?`)) {
+    if (window.confirm(`${personObject.name} is already added to phonebook, replace the existing number with ${personObject.number}?`)) {
       personService
         .update(personObject)
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
           setNewName('')
           setNewNumber('')
+          setSuccessMessage(`Succesfully updated the number for ${returnedPerson.name}!`)
+          setTimeout(() => { setSuccessMessage(null) }, 5000)
         })
       return
     }
-    console.log("User canceled replacing number.");
+    console.log("User canceled updating number.");
     return
   }
 
@@ -55,6 +61,8 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setSuccessMessage(`Succesfully added ${returnedPerson.name} to phonebook!`)
+        setTimeout(() => { setSuccessMessage(null) }, 5000)
       })
   }
 
@@ -65,6 +73,8 @@ const App = () => {
         .deletePerson(personToDelete.id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== personToDelete.id))
+          setSuccessMessage(`Succesfully deleted ${personToDelete.name}!`)
+          setTimeout(() => { setSuccessMessage(null) }, 5000)
         })
     }
     else { console.log("User cancelled deletion.") }
@@ -88,6 +98,8 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <SuccessNotification message={successMessage} />
+
       <Filter
         filter={filter}
         handleFilterChange={handleFilterChange}
