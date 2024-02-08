@@ -15,4 +15,11 @@ const deletePerson = (id) => {
         .catch(error => console.log(`Failed to delete person with id: ${id}`, error))
 }
 
-export default { getAll, create, deletePerson }
+const update = (person) => {
+    console.log(`Id of person to update: ${person.id}`)
+    return axios.put(baseUrl + '/' + person.id, person)
+        .then(response => response.data)
+        .catch(error => console.log(`Something went wrong with updating person with id: ${person.id}`, error))
+}
+
+export default { getAll, create, deletePerson, update }

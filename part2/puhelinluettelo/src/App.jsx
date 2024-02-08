@@ -20,17 +20,33 @@ const App = () => {
       })
   }, [])
 
-  const addPerson = (event) => {
-    event.preventDefault()
-
-    if (persons.find(person => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+  const updateNumber = (personObject) => {
+    if (window.confirm(`${personObject.name} is already added to phonebook, replace the older number with a new one?`)) {
+      personService
+        .update(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
+          setNewName('')
+          setNewNumber('')
+        })
       return
     }
+    console.log("User canceled replacing number.");
+    return
+  }
+
+  const addPerson = (event) => {
+    event.preventDefault()
 
     const personObject = {
       name: newName,
       number: newNumber
+    }
+
+    const existingPerson = persons.find(person => person.name === newName)
+    if (existingPerson) {
+      updateNumber({ ...existingPerson, number: newNumber })
+      return
     }
 
     personService
@@ -53,7 +69,6 @@ const App = () => {
     }
     else { console.log("User cancelled deletion.") }
   }
-
 
   const handleNameChange = (event) => {
     console.log(event.target.value)
