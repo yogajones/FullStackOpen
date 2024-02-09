@@ -3,7 +3,7 @@ import NewPersonForm from './components/NewPersonForm'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import personService from './services/persons'
-import SuccessNotification from './components/SuccessNotification'
+import Notification from './components/Notification'
 import './styles/index.css'
 
 const App = () => {
@@ -11,7 +11,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
-  const [successMessage, setSuccessMessage] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationType, setNotificationType] = useState(null);
 
   const [filter, setFilter] = useState('')
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
@@ -32,8 +33,14 @@ const App = () => {
           setPersons(persons.map(person => person.id === returnedPerson.id ? returnedPerson : person))
           setNewName('')
           setNewNumber('')
-          setSuccessMessage(`Succesfully updated the number for ${returnedPerson.name}!`)
-          setTimeout(() => { setSuccessMessage(null) }, 5000)
+          setNotificationType("success")
+          setNotificationMessage(`Succesfully updated the number for ${returnedPerson.name}`)
+          setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 5000)
+        })
+        .catch(error => {
+          setNotificationType("failure")
+          setNotificationMessage(`Failed to update the number for ${personObject.name}. The person may have been deleted by another user.`)
+          setTimeout(() => { setNotificationMessage(null); setNotificationType(null); }, 8000)
         })
       return
     }
@@ -61,8 +68,9 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-        setSuccessMessage(`Succesfully added ${returnedPerson.name} to phonebook!`)
-        setTimeout(() => { setSuccessMessage(null) }, 5000)
+        setNotificationType("success")
+        setNotificationMessage(`Succesfully added ${returnedPerson.name} to phonebook`)
+        setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 5000)
       })
   }
 
@@ -73,8 +81,9 @@ const App = () => {
         .deletePerson(personToDelete.id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== personToDelete.id))
-          setSuccessMessage(`Succesfully deleted ${personToDelete.name}!`)
-          setTimeout(() => { setSuccessMessage(null) }, 5000)
+          setNotificationType("success")
+          setNotificationMessage(`Succesfully deleted ${personToDelete.name}`)
+          setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 5000)
         })
     }
     else { console.log("User cancelled deletion.") }
@@ -98,7 +107,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <SuccessNotification message={successMessage} />
+      <Notification message={notificationMessage} type={notificationType} />
 
       <Filter
         filter={filter}

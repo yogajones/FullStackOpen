@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Ada Lovelace",
-      "number": "39-44-5323523",
+      "number": "39-44-53235322",
       "id": "2"
     },
     {
@@ -14,11 +14,6 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
-    },
-    {
-      "id": "b619",
-      "name": "New Person",
-      "number": "123-345-432-22"
     }
   ]
 }
