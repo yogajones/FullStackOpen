@@ -21,13 +21,17 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const showCountry = (country) => {
+    setFilter(country.name.common)
+  }
+
   return (
     <div>
       <h2>Country Information App</h2>
 
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
 
-      {filter !== '' ? (<Countries countries={countriesToShow} />) : null}
+      {filter !== '' ? (<Countries countries={countriesToShow} showCountry={showCountry} />) : null}
     </div>
   )
 }

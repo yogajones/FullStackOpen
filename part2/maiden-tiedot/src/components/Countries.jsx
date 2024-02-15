@@ -1,3 +1,11 @@
+const ShowCountryButton = ({ country, showCountry }) => {
+    return (
+        <button type="submit" onClick={() => { showCountry(country) }}>
+            show
+        </button>
+    )
+}
+
 const Country = ({ country }) => {
     return (
         <div>
@@ -16,7 +24,7 @@ const Country = ({ country }) => {
     )
 }
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, showCountry }) => {
     if (countries.length > 10) {
         return <p>Too many matches, please specify your filter.</p>
     } else if (countries.length === 1) {
@@ -26,7 +34,7 @@ const Countries = ({ countries }) => {
             <div>
                 <ul>
                     {countries.map(country => (
-                        <li key={country.name.common}>{country.name.common}</li>
+                        <li key={country.name.common}>{country.name.common} <ShowCountryButton country={country} showCountry={showCountry} /></li>
                     ))}
                 </ul>
             </div>
