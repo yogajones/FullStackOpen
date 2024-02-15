@@ -1,34 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import infoService from './services/infoservice'
+import Filter from './components/Filter'
+import Countries from './components/Countries'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [countries, setCountries] = useState([])
+  const [filter, setFilter] = useState('')
+  const countriesToShow = countries.filter(country => country.name.common.toLowerCase().includes(filter.toLowerCase()))
+
+  useEffect(() => {
+    infoService
+      .getAll()
+      .then(countryData => {
+        setCountries(countryData)
+      })
+  }, [])
+
+  const handleFilterChange = (event) => {
+    console.log(event.target.value)
+    setFilter(event.target.value)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <h2>Country Information App</h2>
+
+      <Filter filter={filter} handleFilterChange={handleFilterChange} />
+
+      {filter !== '' ? (<Countries countries={countriesToShow} />) : null}
+    </div>
   )
 }
 
