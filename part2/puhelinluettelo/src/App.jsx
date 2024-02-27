@@ -35,7 +35,7 @@ const App = () => {
           setNewNumber('')
           setNotificationType("success")
           setNotificationMessage(`Succesfully updated the number for ${returnedPerson.name}`)
-          setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 5000)
+          setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 8000)
         })
         .catch(error => {
           setNotificationType("failure")
@@ -70,7 +70,12 @@ const App = () => {
         setNewNumber('')
         setNotificationType("success")
         setNotificationMessage(`Succesfully added ${returnedPerson.name} to phonebook`)
-        setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 5000)
+        setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 8000)
+      })
+      .catch(error => {
+        setNotificationType("failure")
+        setNotificationMessage(`Error: ${error.response.data.error}`)
+        setTimeout(() => { setNotificationMessage(null); setNotificationType(null); }, 8000)
       })
   }
 
@@ -83,7 +88,7 @@ const App = () => {
           setPersons(persons.filter(person => person.id !== personToDelete.id))
           setNotificationType("success")
           setNotificationMessage(`Succesfully deleted ${personToDelete.name}`)
-          setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 5000)
+          setTimeout(() => { setNotificationMessage(null); setNotificationType(null) }, 8000)
         })
     }
     else { console.log("User cancelled deletion.") }
