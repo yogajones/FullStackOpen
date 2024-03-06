@@ -90,3 +90,10 @@ describe('author with most blogs', () => {
             {author: 'Robert C. Martin', blogs: 3})
     })
 })
+
+describe('author with the most likes', () => {
+    test('is Dijkstra with 17 likes', () => {
+        assert.deepStrictEqual(listHelper.mostLikes(testBlogs),
+            {author: 'Edsger W. Dijkstra', likes: 17})
+    })
+})
