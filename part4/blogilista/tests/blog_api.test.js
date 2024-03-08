@@ -65,6 +65,22 @@ describe('POST /api/blogs', () => {
         const blogAuthor = response.body.map(r => r.author)
         assert(blogAuthor.includes('A. Author'))
     })
+    test('sets likes to 0 if undefined', async () => {
+        const undefinedLikesBlog = {
+            title: 'Where are my likes?',
+            author: 'Another Author',
+            url: 'http://www.google.fi/'
+        }
+        await api
+            .post('/api/blogs')
+            .send(undefinedLikesBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+          
+        const response = await api.get('/api/blogs')
+        const savedBlog = response.body.find(b => b.title === 'Where are my likes?')
+        assert.strictEqual(savedBlog.likes, 0)
+    })
 })
 
 
