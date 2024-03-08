@@ -21,7 +21,15 @@ describe('GET /api/blogs', () => {
     })
     test('returns the correct number of blogs', async () => {
         const response = await api.get('/api/blogs')
-        assert.strictEqual(response.body.length, 6)
+        assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    })
+    test('returns blogs with an id field', async () => {
+        const response = await api.get('/api/blogs')
+        const blogs = response.body
+
+        blogs.forEach(blog => {
+            assert.notStrictEqual(blog.id, undefined)
+        })
     })
 })
 
