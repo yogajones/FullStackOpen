@@ -81,6 +81,15 @@ describe('POST /api/blogs', () => {
         const savedBlog = response.body.find(b => b.title === 'Where are my likes?')
         assert.strictEqual(savedBlog.likes, 0)
     })
+    test('returns 400 if title or url is undefined', async () => {
+        const blogWithOnlyAuthor = {
+            author: 'Lonely Author'
+        }
+        await api
+            .post('/api/blogs')
+            .send(blogWithOnlyAuthor)
+            .expect(400)
+    })
 })
 
 
