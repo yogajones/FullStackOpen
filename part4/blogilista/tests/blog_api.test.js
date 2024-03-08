@@ -33,6 +33,40 @@ describe('GET /api/blogs', () => {
     })
 })
 
+describe('POST /api/blogs', () => {
+    const newBlog = {
+        title: 'Titles and such',
+        author: 'A. Author',
+        url: 'http://www.google.com/',
+        likes: 0
+    }
+    test('increases the number of returned blogs by one', async () => {
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+          
+        const response = await api.get('/api/blogs')          
+        assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
+    })
+    test('adds the proper content to the database', async () => {
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+      
+        const response = await api.get('/api/blogs')
+
+        const blogTitles = response.body.map(r => r.title)
+        assert(blogTitles.includes('Titles and such'))
+
+        const blogAuthor = response.body.map(r => r.author)
+        assert(blogAuthor.includes('A. Author'))
+    })
+})
+
 
 after(async () => {
     await mongoose.connection.close()
