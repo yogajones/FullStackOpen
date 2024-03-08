@@ -116,6 +116,31 @@ describe('DELETE /api/blogs/:id', () => {
     })
 })
 
+describe('PUT /api/blogs/:id', () => {
+    test('succesfully updates existing blog', async () => {
+        const blogsAtStart = await helper.blogsInDB()
+        const blogToUpdate = blogsAtStart[0]
+        const likesInStart = blogToUpdate.likes
+        blogToUpdate.likes += 1
+
+        await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send({blogToUpdate})
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        const response = await api.get('/api/blogs')
+        const updatedBlog = response.body.find(b => b.id === blogToUpdate.id)
+        assert.strictEqual(updatedBlog.likes, likesInStart)
+    })
+    test('returns 400 if using invalid id', async () => {
+        const nonExistingId = 'ItIsHighlyUnlikelyThatAnIdLikeThisGotGeneratedByMongo'
+        await api
+            .put(`/api/blogs/${nonExistingId}`)
+            .expect(400)
+    })
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
