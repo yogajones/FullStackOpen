@@ -92,6 +92,29 @@ describe('POST /api/blogs', () => {
     })
 })
 
+describe('DELETE /api/blogs/:id', () => {
+    test('succesfully deletes existing blog', async () => {
+        const blogsAtStart = await helper.blogsInDB()
+        const blogToDelete = blogsAtStart[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await helper.blogsInDB()
+        
+        const contents = blogsAtEnd.map(r => r.title)
+        assert(!contents.includes(blogToDelete.title))
+
+        assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+    })
+    test('returns 400 if blog to delete does not exist', async () => {
+        const nonExistingId = 'ItIsHighlyUnlikelyThatAnIdLikeThisGotGeneratedByMongo'
+        await api
+            .delete(`/api/blogs/${nonExistingId}`)
+            .expect(400)
+    })
+})
 
 after(async () => {
     await mongoose.connection.close()
