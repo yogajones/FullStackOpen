@@ -5,11 +5,24 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const helper = require('./test_helper')
+
+let authHeader = null
 
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+
+    await User.deleteMany({})
+    await api
+        .post('/api/users')
+        .send({username: 'dumdum', password: 'dummy'})
+    const res = await api
+        .post('/api/login')
+        .send({username: 'dumdum', password: 'dummy'})
+    const token = res.body.token
+    authHeader = 'Bearer ' + token
 })
 
 describe('GET /api/blogs', () => {
@@ -43,6 +56,7 @@ describe('POST /api/blogs', () => {
     test('increases the number of returned blogs by one', async () => {
         await api
             .post('/api/blogs')
+            .set('Authorization', authHeader)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -53,6 +67,7 @@ describe('POST /api/blogs', () => {
     test('adds the proper content to the database', async () => {
         await api
             .post('/api/blogs')
+            .set('Authorization', authHeader)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -73,6 +88,7 @@ describe('POST /api/blogs', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', authHeader)
             .send(undefinedLikesBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -87,6 +103,7 @@ describe('POST /api/blogs', () => {
         }
         await api
             .post('/api/blogs')
+            .set('Authorization', authHeader)
             .send(blogWithOnlyAuthor)
             .expect(400)
     })
@@ -94,13 +111,25 @@ describe('POST /api/blogs', () => {
 
 describe('DELETE /api/blogs/:id', () => {
     test('succesfully deletes existing blog', async () => {
-        const blogsAtStart = await helper.blogsInDB()
-        const blogToDelete = blogsAtStart[0]
+        const newBlog = {
+            title: 'Titles and such',
+            author: 'A. Author',
+            url: 'http://www.google.com/',
+            likes: 0
+        }
+        const res = await api
+            .post('/api/blogs')
+            .set('Authorization', authHeader)
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        const blogToDelete = res.body
 
+        const blogsAtStart = await helper.blogsInDB()
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', authHeader)
             .expect(204)
-
         const blogsAtEnd = await helper.blogsInDB()
         
         const contents = blogsAtEnd.map(r => r.title)

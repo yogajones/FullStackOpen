@@ -33,13 +33,11 @@ describe('GET /api/users', () => {
 describe('POST /api/users', () => {
     test('succesfully creates a new user', async () => {
         const usersAtStart = await helper.usersInDB()
-
         const newUser = {
             username: 'deedee',
             name: 'Dee Dee',
             password: 'doodoo'
         }
-
         await api
             .post('/api/users')
             .send(newUser)
@@ -52,45 +50,51 @@ describe('POST /api/users', () => {
         const usernames = usersAtEnd.map(u => u.username)
         assert(usernames.includes(newUser.username))
     })
-    test('enforces unique usernames at least 3 characters long', async () => {
+    test('enforces unique usernames', async () => {
+        const newUser = {
+            username: 'deedee',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const duplicateUsername = {
+            username: 'deedee',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+        await api
+            .post('/api/users')
+            .send(duplicateUsername)
+            .expect(400)
+
+        const usersAtEnd = await helper.usersInDB()
+        const usernames = usersAtEnd.map(u => u.username)
+        assert.strictEqual(usernames.filter(u => u === duplicateUsername.username).length, 1)
+    })
+    test('enforces usernames to be at least 3 characters', async () => {
         const usersAtStart = await helper.usersInDB()
 
-        const validUser = {
-            username: 'heehee',
-            name: 'Dee Dee',
-            password: 'doodoo'
-        }
-        const duplicateUsername = {
-            username: 'heehee',
-            name: 'Dee Dee',
-            password: 'doodoo'
-        }
         const shortUsername = {
             username: 'd',
             name: 'Dee Dee',
             password: 'doodoo'
         }
-
-        await api
-            .post('/api/users')
-            .send(validUser)
-            .expect(201)
-        await api
-            .post('/api/users')
-            .send(duplicateUsername)
-            .expect(400)
         await api
             .post('/api/users')
             .send(shortUsername)
             .expect(400)
-        
+
         const usersAtEnd = await helper.usersInDB()
-        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
 
         const usernames = usersAtEnd.map(u => u.username)
-        assert(usernames.includes(validUser.username))
-        assert.strictEqual(usernames.filter(u => u === duplicateUsername.username).length, 1)
         assert.strictEqual(usernames.filter(u => u === shortUsername.username).length, 0)
+
     })
     test('enforces passwords at least 3 characters long', async () => {
         const usersAtStart = await helper.usersInDB()
