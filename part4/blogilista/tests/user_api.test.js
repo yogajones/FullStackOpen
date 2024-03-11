@@ -52,6 +52,86 @@ describe('POST /api/users', () => {
         const usernames = usersAtEnd.map(u => u.username)
         assert(usernames.includes(newUser.username))
     })
+    test('enforces unique usernames at least 3 characters long', async () => {
+        const usersAtStart = await helper.usersInDB()
+
+        const validUser = {
+            username: 'heehee',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+        const duplicateUsername = {
+            username: 'heehee',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+        const shortUsername = {
+            username: 'd',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+
+        await api
+            .post('/api/users')
+            .send(validUser)
+            .expect(201)
+        await api
+            .post('/api/users')
+            .send(duplicateUsername)
+            .expect(400)
+        await api
+            .post('/api/users')
+            .send(shortUsername)
+            .expect(400)
+        
+        const usersAtEnd = await helper.usersInDB()
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(u => u.username)
+        assert(usernames.includes(validUser.username))
+        assert.strictEqual(usernames.filter(u => u === duplicateUsername.username).length, 1)
+        assert.strictEqual(usernames.filter(u => u === shortUsername.username).length, 0)
+    })
+    test('enforces passwords at least 3 characters long', async () => {
+        const usersAtStart = await helper.usersInDB()
+
+        const validUser = {
+            username: 'heehee',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+        const emptyPassword = {
+            username: 'tootoo',
+            name: 'Dee Dee',
+            password: ''
+        }
+        const shortPassword = {
+            username: 'd',
+            name: 'Dee Dee',
+            password: 'd2'
+        }
+
+        await api
+            .post('/api/users')
+            .send(validUser)
+            .expect(201)
+        await api
+            .post('/api/users')
+            .send(emptyPassword)
+            .expect(400)
+        await api
+            .post('/api/users')
+            .send(shortPassword)
+            .expect(400)
+        
+        const usersAtEnd = await helper.usersInDB()
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(u => u.username)
+        assert(usernames.includes(validUser.username))
+        assert.strictEqual(usernames.includes(emptyPassword.username), false)
+        assert.strictEqual(usernames.includes(shortPassword.username), false)
+    })
 })
 
 
