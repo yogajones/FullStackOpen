@@ -31,7 +31,6 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-    // TODO: add token auth
     const body = request.body
 
     const blog = {
@@ -51,7 +50,6 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
     if (blog.user.toString() === user._id.toString()) {
         await Blog.findByIdAndDelete(request.params.id)
-        await Blog.deleteOne({id: blog.id})
         response.status(204).end()
     }
     return response.status(401).json({error: 'token invalid'})

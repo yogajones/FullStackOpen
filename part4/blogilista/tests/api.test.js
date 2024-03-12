@@ -1,3 +1,11 @@
+/*
+Against the principle of separation of concerns, a 2-in-1 test module
+that contains tests for both blog and user related operations.
+Running the tests from separate files with 'npm test -concurrency=1'
+produces unexpected and variable errors, which hint that there is some
+unwanted interference between the two test modules.
+*/
+
 const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
@@ -24,6 +32,9 @@ beforeEach(async () => {
     const token = res.body.token
     authHeader = 'Bearer ' + token
 })
+
+
+// BLOG-RELATED TESTS START HERE
 
 describe('GET /api/blogs', () => {
     test('returns JSON content', async () => {
@@ -107,6 +118,15 @@ describe('POST /api/blogs', () => {
             .send(blogWithOnlyAuthor)
             .expect(400)
     })
+    test('returns 401 if token not in request', async () => {
+        const blogsAtStart = await api.get('/api/blogs')    
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(401)
+        const blogsAtEnd = await api.get('/api/blogs')          
+        assert.strictEqual(blogsAtStart.length, blogsAtEnd.length)
+    })
 })
 
 describe('DELETE /api/blogs/:id', () => {
@@ -141,6 +161,7 @@ describe('DELETE /api/blogs/:id', () => {
         const nonExistingId = 'ItIsHighlyUnlikelyThatAnIdLikeThisGotGeneratedByMongo'
         await api
             .delete(`/api/blogs/${nonExistingId}`)
+            .set('Authorization', authHeader)
             .expect(400)
     })
 })
@@ -169,6 +190,107 @@ describe('PUT /api/blogs/:id', () => {
             .expect(400)
     })
 })
+
+// USER-RELATED TESTS START HERE
+
+describe('GET /api/users', () => {
+    test('succesfully returns all users', async () => {
+        const response = await api
+            .get('/api/users')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+
+        assert.strictEqual(response.body.length, helper.initialUsers.length)
+    })
+})
+
+
+describe('POST /api/users', () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+        await User.insertMany(helper.initialUsers)
+    })
+    
+    test('succesfully creates a new user', async () => {
+        const usersAtStart = helper.initialUsers
+        const newUser = {
+            username: 'deedee',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+        
+        const usersAtEnd = await helper.usersInDB()
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+        const usernames = usersAtEnd.map(u => u.username)
+        assert(usernames.includes(newUser.username))
+    })
+    test('enforces unique usernames', async () => {
+        const duplicateUsername = {
+            username: 'root',
+            password: 'root'
+        }
+        const res = await api
+            .post('/api/users')
+            .send(duplicateUsername)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDB()
+        assert(res.body.error.includes('username is already taken'))
+        assert.strictEqual(usersAtEnd.length, helper.initialUsers.length)
+    })
+    test('enforces usernames to be at least 3 characters', async () => {
+        const shortUsername = {
+            username: 'd',
+            name: 'Dee Dee',
+            password: 'doodoo'
+        }
+        await api
+            .post('/api/users')
+            .send(shortUsername)
+            .expect(400)
+
+        const usersAtEnd = await helper.usersInDB()
+        assert.strictEqual(usersAtEnd.length, helper.initialUsers.length)
+
+        const usernames = usersAtEnd.map(u => u.username)
+        assert.strictEqual(usernames.filter(u => u === shortUsername.username).length, 0)
+
+    })
+    test('enforces passwords at least 3 characters long', async () => {
+        const emptyPassword = {
+            username: 'tootoo',
+            password: ''
+        }
+        const shortPassword = {
+            username: 'poopoo',
+            password: 'd2'
+        }
+
+        await api
+            .post('/api/users')
+            .send(emptyPassword)
+            .expect(400)
+        await api
+            .post('/api/users')
+            .send(shortPassword)
+            .expect(400)
+        
+        const usersAtEnd = await helper.usersInDB()
+        assert.strictEqual(usersAtEnd.length, helper.initialUsers.length)
+
+        const usernames = usersAtEnd.map(u => u.username)
+        assert.strictEqual(usernames.includes(emptyPassword.username), false)
+        assert.strictEqual(usernames.includes(shortPassword.username), false)
+    })
+})
+
 
 after(async () => {
     await mongoose.connection.close()
