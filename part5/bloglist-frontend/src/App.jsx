@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import './styles/index.css'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,7 +15,16 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const [errorMessage, setErrorMessage] = useState(null)
+  const toastConfig = {
+    position: "top-center",
+    autoClose: 4000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: false,
+    progress: undefined,
+    theme: "colored"
+  }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -47,10 +56,7 @@ const App = () => {
       console.log('login succesful')
     } catch (exception) {
       console.log('login failed')
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      toast.error('Wrong username or password', toastConfig)
     }
   }
 
@@ -71,20 +77,18 @@ const App = () => {
       setUrl('')
       setBlogs([...blogs, newBlog])
       console.log('..new blog created!')
+      toast.success(`Succesfully added ${title} by ${author}`, toastConfig)
     } catch (exception) {
       console.log('..blog creation failed!')
-      setErrorMessage('Failed to create blog')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      toast.error('Failed to create blog', toastConfig)
     }
   }
 
   if (user === null) {
     return (
       <div>
-        <Notification message={errorMessage} type='error' />
-        <h2>Log in to application</h2>
+        <ToastContainer />
+        <h2>Log in to BlogList App</h2>
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -108,7 +112,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={errorMessage} type='error' />
+      <ToastContainer />
       <h2>Blogs</h2>
       <div>
         Logged in as {user.username}
