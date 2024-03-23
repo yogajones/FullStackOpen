@@ -4,6 +4,7 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import toastConfig from './config/toast'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -14,17 +15,6 @@ const App = () => {
 
   const [blogs, setBlogs] = useState([])
   const blogFormRef = useRef()
-
-  const toastConfig = {
-    position: "top-center",
-    autoClose: 4000,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: false,
-    progress: undefined,
-    theme: "colored"
-  }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
