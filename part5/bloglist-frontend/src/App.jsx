@@ -100,7 +100,7 @@ const App = () => {
   return (
     <div>
       <ToastContainer />
-      <h2>BlogList App</h2>
+      <h1>BlogList App</h1>
       <>
         Logged in as {user.username}
         <button onClick={handleLogout} style={{ marginLeft: '15px' }}>logout</button>
@@ -110,7 +110,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
 
-      <h3>Your blogs</h3>
+      <h2>All blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
