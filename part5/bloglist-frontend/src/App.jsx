@@ -71,6 +71,21 @@ const App = () => {
     }
   }
 
+  const likeBlog = async blogObject => {
+    console.log('liking a blog..')
+
+    try {
+      await blogService.update(blogObject)
+      const updatedBlogs = await blogService.getAll()
+      setBlogs(updatedBlogs)
+      console.log('..blog liked!')
+      toast.success('Blog liked!', toastConfig)
+    } catch (exception) {
+      console.log('..failed to like blog!')
+      toast.error('Failed to like blog', toastConfig)
+    }
+  }
+
   if (user === null) {
     return (
       <div>
@@ -112,7 +127,7 @@ const App = () => {
 
       <h2>All blogs</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
       )}
     </div>
   )
