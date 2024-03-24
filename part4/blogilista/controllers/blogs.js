@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const userExtractor = require('../utils/middleware').userExtractor
 
 
@@ -30,9 +31,9 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
     response.status(201).json(savedBlog)
 })
 
-blogsRouter.put('/:id', userExtractor, async (request, response) => {
+blogsRouter.put('/:id', async (request, response) => {
     const body = request.body
-    const user = request.user
+    const user = await User.findById(body.addedBy)
 
     const blog = {
         title: body.title,

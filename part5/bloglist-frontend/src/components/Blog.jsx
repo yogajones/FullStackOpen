@@ -13,7 +13,8 @@ const Blog = ({ blog, likeBlog }) => {
       author: blog.author,
       url: blog.url,
       likes: blog.likes + 1,
-      id: blog.id
+      id: blog.id,
+      addedBy: blog.user.id
     })
   }
 
