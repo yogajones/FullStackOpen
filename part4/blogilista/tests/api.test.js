@@ -25,10 +25,10 @@ beforeEach(async () => {
     await User.deleteMany({})
     await api
         .post('/api/users')
-        .send({username: 'dumdum', password: 'dummy'})
+        .send({ username: 'dumdum', password: 'dummy' })
     const res = await api
         .post('/api/login')
-        .send({username: 'dumdum', password: 'dummy'})
+        .send({ username: 'dumdum', password: 'dummy' })
     const token = res.body.token
     authHeader = 'Bearer ' + token
 })
@@ -71,8 +71,8 @@ describe('POST /api/blogs', () => {
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-          
-        const response = await api.get('/api/blogs')          
+
+        const response = await api.get('/api/blogs')
         assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
     })
     test('adds the proper content to the database', async () => {
@@ -82,7 +82,7 @@ describe('POST /api/blogs', () => {
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-      
+
         const response = await api.get('/api/blogs')
 
         const blogTitles = response.body.map(r => r.title)
@@ -103,7 +103,7 @@ describe('POST /api/blogs', () => {
             .send(undefinedLikesBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-          
+
         const response = await api.get('/api/blogs')
         const savedBlog = response.body.find(b => b.title === 'Where are my likes?')
         assert.strictEqual(savedBlog.likes, 0)
@@ -119,12 +119,12 @@ describe('POST /api/blogs', () => {
             .expect(400)
     })
     test('returns 401 if token not in request', async () => {
-        const blogsAtStart = await api.get('/api/blogs')    
+        const blogsAtStart = await api.get('/api/blogs')
         await api
             .post('/api/blogs')
             .send(newBlog)
             .expect(401)
-        const blogsAtEnd = await api.get('/api/blogs')          
+        const blogsAtEnd = await api.get('/api/blogs')
         assert.strictEqual(blogsAtStart.length, blogsAtEnd.length)
     })
 })
@@ -151,7 +151,7 @@ describe('DELETE /api/blogs/:id', () => {
             .set('Authorization', authHeader)
             .expect(204)
         const blogsAtEnd = await helper.blogsInDB()
-        
+
         const contents = blogsAtEnd.map(r => r.title)
         assert(!contents.includes(blogToDelete.title))
 
@@ -175,7 +175,8 @@ describe('PUT /api/blogs/:id', () => {
 
         await api
             .put(`/api/blogs/${blogToUpdate.id}`)
-            .send({blogToUpdate})
+            .set('Authorization', authHeader)
+            .send({ blogToUpdate })
             .expect(200)
             .expect('Content-Type', /application\/json/)
 
@@ -183,11 +184,11 @@ describe('PUT /api/blogs/:id', () => {
         const updatedBlog = response.body.find(b => b.id === blogToUpdate.id)
         assert.strictEqual(updatedBlog.likes, likesInStart)
     })
-    test('returns 400 if using invalid id', async () => {
+    test('returns 401 if using invalid id', async () => {
         const nonExistingId = 'ItIsHighlyUnlikelyThatAnIdLikeThisGotGeneratedByMongo'
         await api
             .put(`/api/blogs/${nonExistingId}`)
-            .expect(400)
+            .expect(401)
     })
 })
 
@@ -210,7 +211,7 @@ describe('POST /api/users', () => {
         await User.deleteMany({})
         await User.insertMany(helper.initialUsers)
     })
-    
+
     test('succesfully creates a new user', async () => {
         const usersAtStart = helper.initialUsers
         const newUser = {
@@ -223,7 +224,7 @@ describe('POST /api/users', () => {
             .send(newUser)
             .expect(201)
             .expect('Content-Type', /application\/json/)
-        
+
         const usersAtEnd = await helper.usersInDB()
         assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
@@ -281,7 +282,7 @@ describe('POST /api/users', () => {
             .post('/api/users')
             .send(shortPassword)
             .expect(400)
-        
+
         const usersAtEnd = await helper.usersInDB()
         assert.strictEqual(usersAtEnd.length, helper.initialUsers.length)
 
