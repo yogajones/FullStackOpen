@@ -79,12 +79,13 @@ const App = () => {
       const updatedBlogs = await blogService.getAll()
       setBlogs(updatedBlogs)
       console.log('..blog liked!')
-      toast.success('Blog liked!', toastConfig)
     } catch (exception) {
       console.log('..failed to like blog!')
       toast.error('Failed to like blog', toastConfig)
     }
   }
+
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
   if (user === null) {
     return (
@@ -126,7 +127,7 @@ const App = () => {
       </Togglable>
 
       <h2>All blogs</h2>
-      {blogs.map(blog =>
+      {sortedBlogs.map(blog =>
         <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
       )}
     </div>
