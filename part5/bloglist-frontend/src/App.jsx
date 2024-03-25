@@ -71,6 +71,20 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async blogObject => {
+    console.log('deleting a blog..')
+    try {
+      await blogService.remove(blogObject)
+      const updatedBlogs = await blogService.getAll()
+      setBlogs(updatedBlogs)
+      console.log('..blog deleted!')
+      toast.success(`Deleted "${blogObject.title}"!`, toastConfig)
+    } catch (exception) {
+      console.log('..failed to delete blog!')
+      toast.error('Failed to delete blog', toastConfig)
+    }
+  }
+
   const likeBlog = async blogObject => {
     console.log('liking a blog..')
 
@@ -84,8 +98,6 @@ const App = () => {
       toast.error('Failed to like blog', toastConfig)
     }
   }
-
-  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
 
   if (user === null) {
     return (
@@ -127,8 +139,13 @@ const App = () => {
       </Togglable>
 
       <h2>All blogs</h2>
-      {sortedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+        <Blog
+          key={blog.id}
+          blog={blog}
+          likeBlog={likeBlog}
+          deleteBlog={deleteBlog}
+          user={user} />
       )}
     </div>
   )
