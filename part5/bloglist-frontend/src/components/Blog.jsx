@@ -38,14 +38,14 @@ const Blog = ({ blog, likeBlog, deleteBlog, user }) => {
 
   return (
     <div>
-      <div style={hideWhenVisible}>
+      <div style={hideWhenVisible} id='hide-details'>
         <div style={blogStyle}>
           <button style={{ marginRight: '13px' }} onClick={() => setDetailsVisible(true)}>view</button>
           <b>{blog.title}</b> ({blog.author})
         </div>
       </div>
 
-      <div style={showWhenVisible}>
+      <div style={showWhenVisible} id='show-details'>
         <div style={blogStyle}>
           <button style={{ marginRight: '15px' }} onClick={() => setDetailsVisible(false)}>hide</button>
           <b>{blog.title}</b> ({blog.author})
