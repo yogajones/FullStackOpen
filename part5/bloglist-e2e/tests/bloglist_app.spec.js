@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, createBlog } = require('./helper')
+const { loginWith, logOut, createBlog } = require('./helper')
 
 describe('Bloglist app', () => {
   beforeEach(async ({ page, request }) => {
@@ -8,6 +8,13 @@ describe('Bloglist app', () => {
       data: {
         name: 'Test Person',
         username: 'teepee',
+        password: 'restful'
+      }
+    })
+    await request.post('/api/users', {
+      data: {
+        name: 'Test Person 2',
+        username: 'teepee2',
         password: 'restful'
       }
     })
@@ -70,6 +77,27 @@ describe('Bloglist app', () => {
 
       await createBlog(page, 'TestTitle3', 'TestAuthor3', 'TestUrl3')
       await expect(page.getByText('viewTestTitle3 (TestAuthor3)')).toBeVisible()
+    })
+    test('only the user who added a blog sees the remove button', async ({ page }) => {
+      await createBlog(page, 'TestTitle', 'TestAuthor', 'TestUrl')
+      await expect(page.getByText('Succesfully added TestTitle by TestAuthor')).toBeVisible()
+      await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
+      const blogHidden = page.getByText('viewTestTitle (TestAuthor)')
+      await expect(blogHidden).toBeVisible()
+      await blogHidden.getByRole('button', { name: 'view' }).click()
+
+      const blogDetailed = page.getByText('hideTestTitle (TestAuthor)')
+      await expect(blogDetailed.getByText('Added by teepee')).toBeVisible()
+      await expect(blogDetailed.getByRole('button', { name: 'remove' })).toBeVisible()
+
+      await logOut(page)
+      await loginWith(page, 'teepee2', 'restful')
+      await expect(page.getByText('Logged in as teepee2')).toBeVisible()
+
+      await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
+      await blogHidden.getByRole('button', { name: 'view' }).click()
+      await expect(blogDetailed.getByText('Added by teepee')).toBeVisible()
+      await expect(blogDetailed.getByRole('button', { name: 'remove' })).not.toBeVisible()
     })
   })
 })
