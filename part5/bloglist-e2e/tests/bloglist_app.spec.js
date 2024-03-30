@@ -53,5 +53,23 @@ describe('Bloglist app', () => {
       await expect(page.getByText('Succesfully added TestTitle by TestAuthor')).toBeVisible()
       await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
     })
+    test('an existing blog can be liked', async ({ page }) => {
+      await createBlog(page, 'TestTitle', 'TestAuthor', 'TestUrl')
+      await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
+
+      await createBlog(page, 'TestTitle2', 'TestAuthor2', 'TestUrl2')
+      const blog2hidden = page.getByText('viewTestTitle2 (TestAuthor2)')
+      await expect(blog2hidden).toBeVisible()
+      await blog2hidden.getByRole('button', { name: 'view' }).click()
+
+      const blog2detailed = page.getByText('hideTestTitle2 (TestAuthor2)')
+      await expect(blog2detailed.getByText('Likes: 0 like')).toBeVisible()
+      await expect(blog2detailed.getByText('Added by teepee')).toBeVisible()
+      await blog2detailed.getByRole('button', { name: 'like' }).click()
+      await expect(blog2detailed.getByText('Likes: 1 like')).toBeVisible()
+
+      await createBlog(page, 'TestTitle3', 'TestAuthor3', 'TestUrl3')
+      await expect(page.getByText('viewTestTitle3 (TestAuthor3)')).toBeVisible()
+    })
   })
 })
