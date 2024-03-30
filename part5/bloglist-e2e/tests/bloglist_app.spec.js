@@ -60,44 +60,52 @@ describe('Bloglist app', () => {
       await expect(page.getByText('Succesfully added TestTitle by TestAuthor')).toBeVisible()
       await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
     })
-    test('an existing blog can be liked', async ({ page }) => {
-      await createBlog(page, 'TestTitle', 'TestAuthor', 'TestUrl')
-      await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
 
-      await createBlog(page, 'TestTitle2', 'TestAuthor2', 'TestUrl2')
-      const blog2hidden = page.getByText('viewTestTitle2 (TestAuthor2)')
-      await expect(blog2hidden).toBeVisible()
-      await blog2hidden.getByRole('button', { name: 'view' }).click()
+    describe('and having created a blog', () => {
+      beforeEach(async ({ page }) => {
+        await createBlog(page, 'TestTitle', 'TestAuthor', 'TestUrl')
+        await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
+      })
 
-      const blog2detailed = page.getByText('hideTestTitle2 (TestAuthor2)')
-      await expect(blog2detailed.getByText('Likes: 0 like')).toBeVisible()
-      await expect(blog2detailed.getByText('Added by teepee')).toBeVisible()
-      await blog2detailed.getByRole('button', { name: 'like' }).click()
-      await expect(blog2detailed.getByText('Likes: 1 like')).toBeVisible()
+      test('an existing blog can be liked', async ({ page }) => {
+        await createBlog(page, 'TestTitle2', 'TestAuthor2', 'TestUrl2')
+        const blog2hidden = page.getByText('viewTestTitle2 (TestAuthor2)')
+        await expect(blog2hidden).toBeVisible()
+        await blog2hidden.getByRole('button', { name: 'view' }).click()
 
-      await createBlog(page, 'TestTitle3', 'TestAuthor3', 'TestUrl3')
-      await expect(page.getByText('viewTestTitle3 (TestAuthor3)')).toBeVisible()
+        const blog2detailed = page.getByText('hideTestTitle2 (TestAuthor2)')
+        await expect(blog2detailed.getByText('Likes: 0 like')).toBeVisible()
+        await expect(blog2detailed.getByText('Added by teepee')).toBeVisible()
+        await blog2detailed.getByRole('button', { name: 'like' }).click()
+        await expect(blog2detailed.getByText('Likes: 1 like')).toBeVisible()
+      })
+      test('only the user who added a blog sees the remove button', async ({ page }) => {
+        const blogHidden = page.getByText('viewTestTitle (TestAuthor)')
+        await expect(blogHidden).toBeVisible()
+        await blogHidden.getByRole('button', { name: 'view' }).click()
+
+        const blogDetailed = page.getByText('hideTestTitle (TestAuthor)')
+        await expect(blogDetailed.getByText('Added by teepee')).toBeVisible()
+        await expect(blogDetailed.getByRole('button', { name: 'remove' })).toBeVisible()
+
+        await logOut(page)
+        await loginWith(page, 'teepee2', 'restful')
+        await expect(page.getByText('Logged in as teepee2')).toBeVisible()
+
+        await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
+        await blogHidden.getByRole('button', { name: 'view' }).click()
+        await expect(blogDetailed.getByText('Added by teepee')).toBeVisible()
+        await expect(blogDetailed.getByRole('button', { name: 'remove' })).not.toBeVisible()
+      })
+      test('the user who added the blog can remove it', async ({page}) => {
+        const blogHidden = page.getByText('viewTestTitle (TestAuthor)')
+        await blogHidden.getByRole('button', { name: 'view' }).click()
+
+        const blogDetailed = page.getByText('hideTestTitle (TestAuthor)')
+        page.on('dialog', dialog => dialog.accept())
+        await blogDetailed.getByRole('button', { name: 'remove' }).click()
+        await expect(page.getByText('viewTestTitle (TestAuthor)')).not.toBeVisible()
+      })
     })
-    test('only the user who added a blog sees the remove button', async ({ page }) => {
-      await createBlog(page, 'TestTitle', 'TestAuthor', 'TestUrl')
-      await expect(page.getByText('Succesfully added TestTitle by TestAuthor')).toBeVisible()
-      await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
-      const blogHidden = page.getByText('viewTestTitle (TestAuthor)')
-      await expect(blogHidden).toBeVisible()
-      await blogHidden.getByRole('button', { name: 'view' }).click()
-
-      const blogDetailed = page.getByText('hideTestTitle (TestAuthor)')
-      await expect(blogDetailed.getByText('Added by teepee')).toBeVisible()
-      await expect(blogDetailed.getByRole('button', { name: 'remove' })).toBeVisible()
-
-      await logOut(page)
-      await loginWith(page, 'teepee2', 'restful')
-      await expect(page.getByText('Logged in as teepee2')).toBeVisible()
-
-      await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
-      await blogHidden.getByRole('button', { name: 'view' }).click()
-      await expect(blogDetailed.getByText('Added by teepee')).toBeVisible()
-      await expect(blogDetailed.getByRole('button', { name: 'remove' })).not.toBeVisible()
-    })
-  })
+  }) 
 })
