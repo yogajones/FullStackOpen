@@ -51,7 +51,7 @@ describe('Bloglist app', () => {
     test('a new blog can be created', async ({ page }) => {
       await createBlog(page, 'TestTitle', 'TestAuthor', 'TestUrl')
       await expect(page.getByText('Succesfully added TestTitle by TestAuthor')).toBeVisible()
-      await expect(page.getByText('viewTestTitle (TestAuthor)').nth(1)).toBeVisible()
+      await expect(page.getByText('viewTestTitle (TestAuthor)')).toBeVisible()
     })
   })
 })
