@@ -2,8 +2,9 @@ import deepFreeze from 'deep-freeze'
 import reducer, { initialState } from './anecdoteReducer'
 
 describe('anecdote reducer', () => {
+    const state = initialState
+
     test('should return a proper initial state when called with undefined state', () => {
-        const state = {}
         const action = {
             type: 'DO_NOTHING'
         }
@@ -13,7 +14,6 @@ describe('anecdote reducer', () => {
     })
 
     test('vote is incremented when VOTE action is dispatched', () => {
-        const state = initialState
         const action = {
             type: 'VOTE',
             payload: {
@@ -30,5 +30,22 @@ describe('anecdote reducer', () => {
         deepFreeze(state)
         const newState = reducer(state, action)
         expect(newState).toEqual(expectedState)
+    })
+
+    test('appends new anecdote to existing state with action NEW_ANECDOTE', () => {
+        const action = {
+            type: 'NEW_ANECDOTE',
+            payload: {
+                content: 'Missing semicolons bring developers to their knees.',
+                votes: 0,
+                id: 1732485235245
+            }
+        }
+
+        deepFreeze(state)
+        const newState = reducer(state, action)
+
+        expect(newState).toHaveLength(state.length + 1)
+        expect(newState).toContainEqual(action.payload)
     })
 })
