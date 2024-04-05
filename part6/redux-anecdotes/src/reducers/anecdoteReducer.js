@@ -32,7 +32,7 @@ const anecdoteSlice = createSlice({
         anecdote.votes++
       }
       //console.log(JSON.parse(JSON.stringify(state))) //DEBUG
-      return state
+      return state.sort((a, b) => b.votes - a.votes)
     },
     createAction(state, action) {
       state.push(asObject(action.payload))
