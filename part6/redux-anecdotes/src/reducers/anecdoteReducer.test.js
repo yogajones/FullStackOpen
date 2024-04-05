@@ -13,12 +13,10 @@ describe('anecdote reducer', () => {
         expect(newState).toEqual(initialState)
     })
 
-    test('vote is incremented when VOTE action is dispatched', () => {
+    test('vote is incremented', () => {
         const action = {
-            type: 'VOTE',
-            payload: {
-                id: initialState[0].id
-            }
+            type: 'anecdotes/voteAction',
+            payload: initialState[0].id
         }
 
         const expectedState = [...initialState]
@@ -32,20 +30,17 @@ describe('anecdote reducer', () => {
         expect(newState).toEqual(expectedState)
     })
 
-    test('appends new anecdote to existing state with action NEW_ANECDOTE', () => {
+    test('appends new anecdote to existing ones', () => {
         const action = {
-            type: 'NEW_ANECDOTE',
-            payload: {
-                content: 'Missing semicolons bring developers to their knees.',
-                votes: 0,
-                id: 1732485235245
-            }
+            type: 'anecdotes/createAction',
+            payload: 'Missing semicolons bring developers to their knees.'
         }
 
         deepFreeze(state)
         const newState = reducer(state, action)
 
         expect(newState).toHaveLength(state.length + 1)
-        expect(newState).toContainEqual(action.payload)
+        expect(newState.map(obj => obj.content)).toContain(action.payload)
+
     })
 })

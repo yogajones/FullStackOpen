@@ -2,7 +2,7 @@ import deepFreeze from 'deep-freeze'
 import reducer, { initialState } from './filterReducer'
 
 describe('filter reducer', () => {
-    const state = { ...initialState }
+    const state = initialState
 
     test('should return a proper initial state when called with undefined state', () => {
         const action = {
@@ -15,7 +15,7 @@ describe('filter reducer', () => {
 
     test('updates filter correctly', () => {
         const action = {
-            type: 'SET_FILTER',
+            type: 'filter/filterChange',
             payload: 'redux'
         }
 
