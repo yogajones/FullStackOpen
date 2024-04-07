@@ -34,14 +34,18 @@ describe('anecdote reducer', () => {
     test('appends new anecdote to existing ones', () => {
         const action = {
             type: 'anecdotes/createAction',
-            payload: 'Missing semicolons bring developers to their knees.'
+            payload: {
+                id: 11039329,
+                content: 'Missing semicolons bring developers to their knees.',
+                votes: 0
+            }
         }
 
         deepFreeze(state)
         const newState = reducer(state, action)
 
         expect(newState).toHaveLength(state.length + 1)
-        expect(newState.map(obj => obj.content)).toContain(action.payload)
+        expect(newState.map(obj => obj.content)).toContain(action.payload.content)
 
     })
 })

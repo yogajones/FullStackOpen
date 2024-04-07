@@ -16,6 +16,7 @@ const anecdoteSlice = createSlice({
     createAction(state, action) {
       state.push(action.payload)
       //console.log(JSON.parse(JSON.stringify(state))) //DEBUG
+      return state
     },
     initializeAction(state, action) {
       return action.payload
