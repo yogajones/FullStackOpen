@@ -1,4 +1,4 @@
-import { voteAction } from '../reducers/anecdoteReducer'
+import { voteAnecdote } from '../reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification, clearNotification } from '../reducers/notificationReducer'
 
@@ -12,16 +12,16 @@ const AnecdoteList = () => {
 
     const dispatch = useDispatch()
 
-    const vote = ({ content, id }) => {
-        console.log('vote', id)
-        dispatch(voteAction(id))
-        dispatch(setNotification(`You voted: ${content}`))
+    const vote = (anecdote) => {
+        console.log('voted', anecdote.id)
+        dispatch(voteAnecdote(anecdote))
+        dispatch(setNotification(`You voted: ${anecdote.content}`))
         setTimeout((() => { (dispatch(clearNotification())) }), 5000)
     }
 
     return (
         anecdotes.map(anecdote =>
-            <div key={anecdote.id}>
+            <div key={anecdote.id} style={{ marginBottom: 15 }}>
                 <div>
                     {anecdote.content}
                 </div>
