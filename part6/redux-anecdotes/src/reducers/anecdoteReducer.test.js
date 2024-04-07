@@ -1,7 +1,8 @@
 import deepFreeze from 'deep-freeze'
-import reducer, { initialState } from './anecdoteReducer'
+import reducer from './anecdoteReducer'
 
 describe('anecdote reducer', () => {
+    const initialState = []
     const state = initialState
 
     test('should return a proper initial state when called with undefined state', () => {
