@@ -33,7 +33,7 @@ describe('anecdote reducer', () => {
 
     test('appends new anecdote to existing ones', () => {
         const action = {
-            type: 'anecdotes/createAction',
+            type: 'anecdotes/appendAnecdote',
             payload: {
                 id: 11039329,
                 content: 'Missing semicolons bring developers to their knees.',
