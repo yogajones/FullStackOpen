@@ -1,15 +1,25 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
-import { getAnecdotes } from './requests'
+import { getAnecdotes, createAnecdote } from './requests'
 
 const App = () => {
+  const queryClient = useQueryClient()
 
   const result = useQuery({
     queryKey: ['anecdotes'],
     queryFn: getAnecdotes,
     retry: 1
   })
+
+  const newAnecdoteMutation = useMutation({
+    mutationFn: createAnecdote,
+    onSuccess: (newAnec) => {
+      const anecs = queryClient.getQueryData(['anecdotes'])
+      queryClient.setQueryData(['anecdotes'], anecs.concat(newAnec))
+    },
+  })
+
   console.log(JSON.parse(JSON.stringify(result)))
   if (result.isLoading) {
     return <div>loading data...</div>
@@ -20,6 +30,17 @@ const App = () => {
 
   const anecdotes = result.data
 
+  const addAnecdote = async (event) => {
+    event.preventDefault()
+    const content = event.target.anecdote.value
+    if (content.length >= 5) {
+      event.target.anecdote.value = ''
+      newAnecdoteMutation.mutate({ content })
+    } else {
+      console.log('validation error: content must be at least 5 characters')
+    }
+  }
+
   const handleVote = (anecdote) => {
     console.log('vote')
   }
@@ -29,7 +50,7 @@ const App = () => {
       <h3>Anecdote app</h3>
 
       <Notification />
-      <AnecdoteForm />
+      <AnecdoteForm onCreate={addAnecdote} />
 
       {anecdotes.map(anecdote =>
         <div key={anecdote.id}>
