@@ -1,12 +1,12 @@
 import { Routes, Route, useMatch } from 'react-router-dom'
 import { useState } from 'react'
-import Footer from '../components/Footer'
-import About from '../components/About'
-import NewAnecdoteForm from '../components/NewAnecdoteForm'
-import AnecdoteList from '../components/AnecdoteList'
-import Anecdote from '../components/Anecdote'
-import Menu from '../components/Menu'
-import Notification from '../components/Notification'
+import Footer from './components/Footer'
+import About from './components/About'
+import NewAnecdoteForm from './components/NewAnecdoteForm'
+import AnecdoteList from './components/AnecdoteList'
+import Anecdote from './components/Anecdote'
+import Menu from './components/Menu'
+import Notification from './components/Notification'
 
 
 const App = () => {
