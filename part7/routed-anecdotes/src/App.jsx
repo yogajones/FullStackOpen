@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useMatch } from 'react-router-dom'
 import { useState } from 'react'
 import Footer from '../components/Footer'
 import About from '../components/About'
@@ -56,6 +56,11 @@ const App = () => {
     showNotification(`"${voted.content}" now has ${voted.votes} votes.`)
   }
 
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null
+
   return (
     <div>
       <h1>Software anecdotes</h1>
@@ -64,7 +69,7 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} vote={vote} />} />
-        <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
         <Route path="/create" element={<NewAnecdoteForm addNew={addNew} />} />
         <Route path="/about" element={<About />} />
       </Routes>

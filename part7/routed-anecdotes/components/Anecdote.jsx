@@ -1,14 +1,11 @@
-import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 
-const Anecdote = ({ anecdotes }) => {
+const Anecdote = ({ anecdote }) => {
     const padding = {
         paddingBottom: 10
     }
 
-    const id = useParams().id
-    const anecdote = anecdotes.find(n => n.id === Number(id))
     return (
         <div>
             <h2>{anecdote.content} by {anecdote.author}</h2>
@@ -19,7 +16,7 @@ const Anecdote = ({ anecdotes }) => {
 }
 
 Anecdote.propTypes = {
-    anecdotes: PropTypes.array.isRequired
+    anecdote: PropTypes.object
 }
 
 export default Anecdote
