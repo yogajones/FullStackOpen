@@ -6,6 +6,7 @@ import NewAnecdoteForm from '../components/NewAnecdoteForm'
 import AnecdoteList from '../components/AnecdoteList'
 import Anecdote from '../components/Anecdote'
 import Menu from '../components/Menu'
+import Notification from '../components/Notification'
 
 
 const App = () => {
@@ -26,11 +27,19 @@ const App = () => {
     }
   ])
 
-  //const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState('')
+
+  const showNotification = (message) => {
+    setNotification(message)
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
+  }
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    showNotification(`Succesfully added "${anecdote.content}" `)
   }
 
   const anecdoteById = (id) =>
@@ -43,14 +52,15 @@ const App = () => {
       ...anecdote,
       votes: anecdote.votes + 1
     }
-    console.log('anec id', voted.id, 'has now', voted.votes, 'votes')
     setAnecdotes(anecdotes.map(a => a.id === id ? voted : a))
+    showNotification(`"${voted.content}" now has ${voted.votes} votes.`)
   }
 
   return (
     <div>
       <h1>Software anecdotes</h1>
       <Menu />
+      <Notification notification={notification} />
 
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} vote={vote} />} />
