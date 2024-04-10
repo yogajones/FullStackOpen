@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import About from '../components/About'
 import NewAnecdoteForm from '../components/NewAnecdoteForm'
 import AnecdoteList from '../components/AnecdoteList'
+import Anecdote from '../components/Anecdote'
 import Menu from '../components/Menu'
 
 
@@ -53,6 +54,7 @@ const App = () => {
 
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} vote={vote} />} />
+        <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
         <Route path="/create" element={<NewAnecdoteForm addNew={addNew} />} />
         <Route path="/about" element={<About />} />
       </Routes>
