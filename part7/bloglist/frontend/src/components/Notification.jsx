@@ -1,9 +1,12 @@
-const Notification = ({ notification }) => {
-  if (!notification) {
+import { useSelector } from "react-redux";
+
+const Notification = () => {
+  const notification = useSelector(({ notification }) => notification);
+  const { message, type } = notification;
+
+  if (!message) {
     return null;
   }
-
-  const { message, type } = notification;
 
   const style = {
     backgroundColor: type === "success" ? "lightgreen" : "lightpink",

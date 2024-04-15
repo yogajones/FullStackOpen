@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
 import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import { notify } from "./reducers/notificationReducer";
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -14,7 +16,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([]);
   const blogFormRef = useRef();
 
-  const [notification, setNotification] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -29,13 +31,6 @@ const App = () => {
     }
   }, []);
 
-  const notify = (message, type = "success") => {
-    setNotification({ message, type });
-    setTimeout(() => {
-      setNotification(null);
-    }, 5000);
-  };
-
   const handleLogin = async (event) => {
     event.preventDefault();
     console.log("logging in as", username);
@@ -49,7 +44,7 @@ const App = () => {
       console.log("login succesful");
     } catch (exception) {
       console.log("login failed");
-      notify("Wrong username or password", "error");
+      dispatch(notify("Wrong username or password", "error"));
     }
   };
 
@@ -67,10 +62,10 @@ const App = () => {
       const returnedBlog = await blogService.create(blogObject);
       setBlogs([...blogs, returnedBlog]);
       console.log("..new blog created!");
-      notify(`Succesfully added ${blogObject.title} by ${blogObject.author}`);
+      dispatch(notify(`Added ${blogObject.title} by ${blogObject.author}`));
     } catch (exception) {
       console.log("..blog creation failed!");
-      notify("Failed to create blog", "error");
+      dispatch(notify("Failed to create blog", "error"));
     }
   };
 
@@ -81,10 +76,10 @@ const App = () => {
       const updatedBlogs = await blogService.getAll();
       setBlogs(updatedBlogs);
       console.log("..blog deleted!");
-      notify(`Deleted "${blogObject.title}"!`);
+      dispatch(notify(`Deleted "${blogObject.title}"!`));
     } catch (exception) {
       console.log("..failed to delete blog!");
-      notify("Failed to delete blog", "error");
+      dispatch(notify("Failed to delete blog", "error"));
     }
   };
 
@@ -96,9 +91,10 @@ const App = () => {
       const updatedBlogs = await blogService.getAll();
       setBlogs(updatedBlogs);
       console.log("..blog liked!");
+      dispatch(notify("Blog liked!"));
     } catch (exception) {
       console.log("..failed to like blog!");
-      notify("Failed to like blog", "error");
+      dispatch(notify("Failed to like blog", "error"));
     }
   };
 
@@ -106,7 +102,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to BlogList App</h2>
-        <Notification notification={notification} />
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -135,7 +131,7 @@ const App = () => {
   return (
     <div>
       <h1>BlogList App</h1>
-      <Notification notification={notification} />
+      <Notification />
       <>
         Logged in as {user.username}
         <button onClick={handleLogout} style={{ marginLeft: "15px" }}>
