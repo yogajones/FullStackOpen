@@ -1,29 +1,36 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
+import { notify } from "../reducers/notificationReducer";
+import { likeBlog, deleteBlog } from "../reducers/blogReducer";
 
-const Blog = ({ blog, likeBlog, deleteBlog, user }) => {
+const Blog = ({ blog, user }) => {
   const [detailsVisible, setDetailsVisible] = useState(false);
   const hideWhenVisible = { display: detailsVisible ? "none" : "" };
   const showWhenVisible = { display: detailsVisible ? "" : "none" };
 
+  const dispatch = useDispatch();
+
   const like = (event) => {
     event.preventDefault();
-    likeBlog({
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1,
-      id: blog.id,
-      addedBy: blog.user.id,
-    });
+    try {
+      dispatch(likeBlog(blog));
+      dispatch(notify(`You liked: ${blog.title}`));
+    } catch (error) {
+      dispatch(notify("Failed to like blog."));
+    }
   };
 
   const remove = (event) => {
     event.preventDefault();
     if (window.confirm(`Are you sure you want to delete ${blog.title}?`)) {
-      deleteBlog(blog);
+      try {
+        dispatch(deleteBlog(blog));
+        dispatch(notify("Blog deleted!"));
+      } catch (error) {
+        dispatch(notify("Failed to delete blog."));
+      }
     }
-    console.log("User canceled deletion.");
   };
 
   const blogStyle = {
@@ -81,8 +88,6 @@ const Blog = ({ blog, likeBlog, deleteBlog, user }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  likeBlog: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 };
 

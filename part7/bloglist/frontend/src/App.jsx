@@ -7,20 +7,21 @@ import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { notify } from "./reducers/notificationReducer";
+import { createBlog, initializeBlogs } from "./reducers/blogReducer";
+import BlogList from "./components/BlogList";
 
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
-  const [blogs, setBlogs] = useState([]);
   const blogFormRef = useRef();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser");
@@ -59,42 +60,12 @@ const App = () => {
     blogFormRef.current.toggleVisibility();
 
     try {
-      const returnedBlog = await blogService.create(blogObject);
-      setBlogs([...blogs, returnedBlog]);
+      dispatch(createBlog(blogObject));
       console.log("..new blog created!");
       dispatch(notify(`Added ${blogObject.title} by ${blogObject.author}`));
     } catch (exception) {
       console.log("..blog creation failed!");
       dispatch(notify("Failed to create blog", "error"));
-    }
-  };
-
-  const deleteBlog = async (blogObject) => {
-    console.log("deleting a blog..");
-    try {
-      await blogService.remove(blogObject);
-      const updatedBlogs = await blogService.getAll();
-      setBlogs(updatedBlogs);
-      console.log("..blog deleted!");
-      dispatch(notify(`Deleted "${blogObject.title}"!`));
-    } catch (exception) {
-      console.log("..failed to delete blog!");
-      dispatch(notify("Failed to delete blog", "error"));
-    }
-  };
-
-  const likeBlog = async (blogObject) => {
-    console.log("liking a blog..");
-
-    try {
-      await blogService.update(blogObject);
-      const updatedBlogs = await blogService.getAll();
-      setBlogs(updatedBlogs);
-      console.log("..blog liked!");
-      dispatch(notify("Blog liked!"));
-    } catch (exception) {
-      console.log("..failed to like blog!");
-      dispatch(notify("Failed to like blog", "error"));
     }
   };
 
@@ -143,18 +114,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
 
-      <h2>All blogs</h2>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            likeBlog={likeBlog}
-            deleteBlog={deleteBlog}
-            user={user}
-          />
-        ))}
+      <BlogList user={user} />
     </div>
   );
 };
