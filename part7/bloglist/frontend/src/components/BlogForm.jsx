@@ -11,7 +11,6 @@ const BlogForm = ({ blogFormRef }) => {
 
   const addBlog = (event) => {
     event.preventDefault();
-
     try {
       blogFormRef.current.toggleVisibility();
       dispatch(createBlog({ title, author, url }));
