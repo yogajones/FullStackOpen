@@ -24,7 +24,7 @@ const update = async (blogToUpdate) => {
   const config = {
     headers: { Authorization: token },
   };
-  const url = baseUrl + "/" + blogToUpdate.id;
+  const url = `${baseUrl}/${blogToUpdate.id}`;
   const response = await axios.put(url, blogToUpdate, config);
   return response.data;
 };
@@ -33,7 +33,7 @@ const remove = async (id) => {
   const config = {
     headers: { Authorization: token },
   };
-  const url = baseUrl + "/" + id;
+  const url = `${baseUrl}/${id}`;
   const response = await axios.delete(url, config);
   return response.data;
 };
