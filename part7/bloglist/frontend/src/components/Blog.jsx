@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import { notify } from "../reducers/notificationReducer";
-import { likeBlog, deleteBlog } from "../reducers/blogReducer";
+import { likeBlog, removeBlog } from "../reducers/blogReducer";
 
 const Blog = ({ blog, user }) => {
   const [detailsVisible, setDetailsVisible] = useState(false);
@@ -25,7 +25,7 @@ const Blog = ({ blog, user }) => {
     event.preventDefault();
     if (window.confirm(`Are you sure you want to delete ${blog.title}?`)) {
       try {
-        dispatch(deleteBlog(blog));
+        dispatch(removeBlog(blog.id));
         dispatch(notify("Blog deleted!"));
       } catch (error) {
         dispatch(notify("Failed to delete blog."));

@@ -29,11 +29,11 @@ const update = async (blogToUpdate) => {
   return response.data;
 };
 
-const remove = async (blogToDelete) => {
+const remove = async (id) => {
   const config = {
     headers: { Authorization: token },
   };
-  const url = baseUrl + "/" + blogToDelete.id;
+  const url = baseUrl + "/" + id;
   const response = await axios.delete(url, config);
   return response.data;
 };

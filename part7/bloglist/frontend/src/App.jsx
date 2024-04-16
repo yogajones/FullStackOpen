@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import Togglable from "./components/Togglable";
 import Notification from "./components/Notification";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import { notify } from "./reducers/notificationReducer";
-import { createBlog, initializeBlogs } from "./reducers/blogReducer";
+import { initializeBlogs } from "./reducers/blogReducer";
 import BlogList from "./components/BlogList";
 
 const App = () => {
@@ -16,7 +15,6 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -53,20 +51,6 @@ const App = () => {
     event.preventDefault();
     window.localStorage.removeItem("loggedUser");
     window.location.reload();
-  };
-
-  const addBlog = async (blogObject) => {
-    console.log("creating a new blog..");
-    blogFormRef.current.toggleVisibility();
-
-    try {
-      dispatch(createBlog(blogObject));
-      console.log("..new blog created!");
-      dispatch(notify(`Added ${blogObject.title} by ${blogObject.author}`));
-    } catch (exception) {
-      console.log("..blog creation failed!");
-      dispatch(notify("Failed to create blog", "error"));
-    }
   };
 
   if (user === null) {
@@ -111,7 +95,7 @@ const App = () => {
       </>
 
       <Togglable buttonLabel="create new" ref={blogFormRef}>
-        <BlogForm createBlog={addBlog} />
+        <BlogForm blogFormRef={blogFormRef} />
       </Togglable>
 
       <BlogList user={user} />
