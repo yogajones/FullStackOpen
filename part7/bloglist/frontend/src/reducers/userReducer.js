@@ -1,25 +1,34 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
 import loginService from "../services/login";
+import userService from "../services/users";
 
 const initialState = {
-  user: null,
+  current: null,
+  all: null,
 };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser(state, action) {
-      state.user = action.payload;
+    setCurrentUser(state, action) {
+      state.current = action.payload;
     },
-    clearUser(state) {
-      state.user = null;
+    clearCurrentUser(state) {
+      state.current = null;
+    },
+    setAllUsers(state, action) {
+      state.all = action.payload;
+    },
+    clearAllUsers(state) {
+      state.all = null;
     },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setCurrentUser, clearCurrentUser, setAllUsers, clearAllUsers } =
+  userSlice.actions;
 
 export const initializeUser = () => {
   return async (dispatch) => {
@@ -27,8 +36,10 @@ export const initializeUser = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       blogService.setToken(user.token);
-      dispatch(setUser(user));
+      dispatch(setCurrentUser(user));
     }
+    const all = await userService.getAll();
+    dispatch(setAllUsers(all));
   };
 };
 
@@ -38,18 +49,19 @@ export const login = (credentials) => {
       const user = await loginService.login(credentials);
       window.localStorage.setItem("loggedUser", JSON.stringify(user));
       blogService.setToken(user.token);
-      dispatch(setUser(user));
+      dispatch(setCurrentUser(user));
     } catch (error) {
       console.error("Login failed:", error);
-      dispatch(setUser(null));
+      dispatch(setCurrentUser(null));
     }
   };
 };
 
 export const logout = () => {
   return async (dispatch) => {
-    dispatch(clearUser());
+    dispatch(clearCurrentUser());
     window.localStorage.removeItem("loggedUser");
+    dispatch(clearAllUsers());
   };
 };
 

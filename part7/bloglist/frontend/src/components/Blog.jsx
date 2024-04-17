@@ -9,7 +9,7 @@ const Blog = ({ blog }) => {
   const hideWhenVisible = { display: detailsVisible ? "none" : "" };
   const showWhenVisible = { display: detailsVisible ? "" : "none" };
 
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user.current);
 
   const dispatch = useDispatch();
 

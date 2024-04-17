@@ -11,7 +11,7 @@ import { initializeBlogs } from "./reducers/blogReducer";
 import { initializeUser } from "./reducers/userReducer";
 
 const App = () => {
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user.current);
 
   const dispatch = useDispatch();
 
@@ -25,11 +25,13 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
-        <h2>Log in to BlogList App</h2>
-        <Notification />
-        <LoginForm />
-      </div>
+      <Router>
+        <div>
+          <h2>Log in to BlogList App</h2>
+          <Notification />
+          <LoginForm />
+        </div>
+      </Router>
     );
   }
 

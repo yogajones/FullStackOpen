@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../reducers/userReducer";
 
 const NavigationBar = () => {
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user.current);
   const dispatch = useDispatch();
 
   const handleLogout = (event) => {
