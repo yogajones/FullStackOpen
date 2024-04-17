@@ -5,7 +5,7 @@ import userService from "../services/users";
 
 const initialState = {
   current: null,
-  all: null,
+  all: [],
 };
 
 const userSlice = createSlice({
@@ -22,7 +22,7 @@ const userSlice = createSlice({
       state.all = action.payload;
     },
     clearAllUsers(state) {
-      state.all = null;
+      state.all = [];
     },
   },
 });
@@ -30,7 +30,7 @@ const userSlice = createSlice({
 export const { setCurrentUser, clearCurrentUser, setAllUsers, clearAllUsers } =
   userSlice.actions;
 
-export const initializeUser = () => {
+export const updateCurrentUser = () => {
   return async (dispatch) => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser");
     if (loggedUserJSON) {
@@ -38,6 +38,11 @@ export const initializeUser = () => {
       blogService.setToken(user.token);
       dispatch(setCurrentUser(user));
     }
+  };
+};
+
+export const updateAllUsers = () => {
+  return async (dispatch) => {
     const all = await userService.getAll();
     dispatch(setAllUsers(all));
   };
