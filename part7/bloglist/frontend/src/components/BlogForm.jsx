@@ -51,9 +51,7 @@ const BlogForm = ({ blogFormRef }) => {
             id="url-input"
           />
         </div>
-        <button type="submit" style={{ marginTop: "10px" }}>
-          create
-        </button>
+        <button type="submit">create</button>
       </form>
     </div>
   );

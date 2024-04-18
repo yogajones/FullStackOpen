@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import BlogList from "./components/BlogList";
+import Blog from "./components/Blog";
 import Users from "./components/Users";
 import User from "./components/User";
 import NavigationBar from "./components/NavigationBar";
@@ -28,6 +29,7 @@ const App = () => {
   }, [blogs, dispatch]);
 
   const userDetails = useRouteById("/users/:id", (state) => state.user.all);
+  const blogDetails = useRouteById("/blogs/:id", (state) => state.blogs);
 
   if (currentUser === null) {
     return (
@@ -47,7 +49,7 @@ const App = () => {
 
       <Routes>
         <Route path="/blogs" element={<BlogList />} />
-        {/*<Route path="/blogs/:id" element={<Blog blog={blog} />} />*/}
+        <Route path="/blogs/:id" element={<Blog blog={blogDetails} />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User user={userDetails} />} />
       </Routes>
