@@ -1,10 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { notify } from "../reducers/notificationReducer";
-import { likeBlog, removeBlog } from "../reducers/blogReducer";
+import { likeBlog, removeBlog, commentBlog } from "../reducers/blogReducer";
 
 const Blog = ({ blog }) => {
   const user = useSelector((state) => state.user.current);
+  const [comment, setComment] = useState("");
 
   const dispatch = useDispatch();
 
@@ -34,6 +36,17 @@ const Blog = ({ blog }) => {
     }
   };
 
+  const addComment = (event) => {
+    event.preventDefault();
+    try {
+      dispatch(commentBlog(blog.id, comment));
+      dispatch(notify(`Comment added!`));
+      setComment("");
+    } catch (error) {
+      dispatch(notify("Failed to add comment."));
+    }
+  };
+
   const blogStyle = {
     paddingTop: 7,
     paddingBottom: 7,
@@ -60,15 +73,24 @@ const Blog = ({ blog }) => {
         blog.user.username === user.username && (
           <button onClick={remove}>remove</button>
         )}
-      {blog.comments && blog.comments.length > 0 && (
-        <>
-          <h4>Comments</h4>
-          <ul>
-            {blog.comments.map((comment, index) => (
-              <li key={index}>{comment}</li>
-            ))}
-          </ul>
-        </>
+      <h3>Comments</h3>
+      <form onSubmit={addComment}>
+        <div>
+          <input
+            value={comment}
+            onChange={(event) => setComment(event.target.value)}
+          />
+        </div>
+        <button type="submit">add comment</button>
+      </form>
+      {blog.comments && blog.comments.length > 0 ? (
+        <ul>
+          {blog.comments.map((comment, index) => (
+            <li key={index}>{comment}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No comments yet.</p>
       )}
     </div>
   );

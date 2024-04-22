@@ -33,7 +33,7 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
 });
 
 blogsRouter.post("/:id/comments", async (request, response) => {
-  const comment = request.body.content;
+  const comment = request.body.comment;
 
   const blog = await Blog.findById(request.params.id);
   blog.comments = blog.comments.concat(comment);
