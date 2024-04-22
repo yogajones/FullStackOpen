@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
 import loginService from "../services/login";
 import userService from "../services/users";
+import { notify } from "../reducers/notificationReducer";
 
 const initialState = {
   current: null,
@@ -56,7 +57,7 @@ export const login = (credentials) => {
       blogService.setToken(user.token);
       dispatch(setCurrentUser(user));
     } catch (error) {
-      console.error("Login failed:", error);
+      dispatch(notify("Wrong username or password", "error"));
       dispatch(setCurrentUser(null));
     }
   };
