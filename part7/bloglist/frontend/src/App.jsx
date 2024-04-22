@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Container } from "@mui/material";
 
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
@@ -31,29 +32,32 @@ const App = () => {
   const userDetails = useRouteById("/users/:id", (state) => state.user.all);
   const blogDetails = useRouteById("/blogs/:id", (state) => state.blogs);
 
-  if (currentUser === null) {
-    return (
-      <div>
-        <h2>Log in to BlogList App</h2>
-        <Notification />
-        <LoginForm />
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <h1>BlogList App</h1>
-      <NavigationBar />
-      <Notification />
+    <Container>
+      <div>
+        {currentUser === null ? (
+          <>
+            <h2>Log in to BlogList App</h2>
+            <Notification />
+            <LoginForm />
+          </>
+        ) : (
+          <>
+            <h1>BlogList App</h1>
+            <NavigationBar />
+            <Notification />
 
-      <Routes>
-        <Route path="/blogs" element={<BlogList />} />
-        <Route path="/blogs/:id" element={<Blog blog={blogDetails} />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/:id" element={<User user={userDetails} />} />
-      </Routes>
-    </div>
+            <Routes>
+              <Route path="/" element={<Navigate replace to="/blogs" />} />
+              <Route path="/blogs" element={<BlogList />} />
+              <Route path="/blogs/:id" element={<Blog blog={blogDetails} />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/:id" element={<User user={userDetails} />} />
+            </Routes>
+          </>
+        )}
+      </div>
+    </Container>
   );
 };
 
