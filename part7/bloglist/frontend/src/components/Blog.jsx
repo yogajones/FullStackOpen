@@ -60,12 +60,22 @@ const Blog = ({ blog }) => {
         blog.user.username === user.username && (
           <button onClick={remove}>remove</button>
         )}
+      {blog.comments && blog.comments.length > 0 && (
+        <>
+          <h4>Comments</h4>
+          <ul>
+            {blog.comments.map((comment, index) => (
+              <li key={index}>{comment}</li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 };
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
+  blog: PropTypes.object,
 };
 
 export default Blog;
