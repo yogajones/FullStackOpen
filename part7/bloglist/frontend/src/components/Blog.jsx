@@ -3,6 +3,17 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import { notify } from "../reducers/notificationReducer";
 import { likeBlog, removeBlog, commentBlog } from "../reducers/blogReducer";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  TextField,
+  List,
+  ListItem,
+  Box,
+  CardActions,
+} from "@mui/material";
 
 const Blog = ({ blog }) => {
   const user = useSelector((state) => state.user.current);
@@ -47,52 +58,61 @@ const Blog = ({ blog }) => {
     }
   };
 
-  const blogStyle = {
-    paddingTop: 7,
-    paddingBottom: 7,
-    paddingLeft: 5,
-    marginBottom: 5,
-    marginTop: 15,
-  };
-
   return (
-    <div style={blogStyle}>
-      <h2>
-        <b>{blog.title}</b> ({blog.author})
-      </h2>
-      <p>
-        Likes: {blog.likes}{" "}
-        <button onClick={like} style={{ marginLeft: "15px" }}>
-          like
-        </button>
-      </p>
-      <p>{blog.url}</p>
-      {blog.user && blog.user.username && <p>Added by {blog.user.username}</p>}
-      {blog.user &&
-        blog.user.username &&
-        blog.user.username === user.username && (
-          <button onClick={remove}>remove</button>
+    <Card sx={{ p: 5, marginTop: "86px" }}>
+      <CardContent>
+        <Typography variant="h5" gutterBottom>
+          <b>{blog.title}</b> ({blog.author})
+        </Typography>
+        <Typography variant="body2">
+          Likes: {blog.likes}
+          <Button size="small" onClick={like} sx={{ ml: 1 }}>
+            like
+          </Button>
+        </Typography>
+        <Typography variant="body2">{blog.url}</Typography>
+        {blog.user && blog.user.username && (
+          <Typography>Added by {blog.user.username}</Typography>
         )}
-      <h3>Comments</h3>
-      <form onSubmit={addComment}>
-        <div>
-          <input
+        {blog.user &&
+          blog.user.username &&
+          blog.user.username === user.username && (
+            <Button color="error" onClick={remove}>
+              remove
+            </Button>
+          )}
+      </CardContent>
+      <CardActions>
+        <Typography variant="h6">Comments</Typography>
+        <Box
+          component="form"
+          onSubmit={addComment}
+          sx={{ display: "flex", alignItems: "center", width: "100%" }}
+        >
+          <TextField
+            fullWidth
+            variant="outlined"
+            size="small"
             value={comment}
             onChange={(event) => setComment(event.target.value)}
+            placeholder="Add a comment"
+            sx={{ mr: 1 }}
           />
-        </div>
-        <button type="submit">add comment</button>
-      </form>
-      {blog.comments && blog.comments.length > 0 ? (
-        <ul>
-          {blog.comments.map((comment, index) => (
-            <li key={index}>{comment}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No comments yet.</p>
-      )}
-    </div>
+          <Button type="submit" variant="contained" color="primary">
+            add
+          </Button>
+        </Box>
+      </CardActions>
+      <List>
+        {blog.comments && blog.comments.length > 0 ? (
+          blog.comments.map((comment, index) => (
+            <ListItem key={index}>&quot;{comment}&quot;</ListItem>
+          ))
+        ) : (
+          <ListItem>No comments yet.</ListItem>
+        )}
+      </List>
+    </Card>
   );
 };
 

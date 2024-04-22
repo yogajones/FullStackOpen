@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { Box, TextField, Button, Typography } from "@mui/material";
 import { notify } from "../reducers/notificationReducer";
 import { createBlog } from "../reducers/blogReducer";
 
@@ -24,36 +25,40 @@ const BlogForm = ({ blogFormRef }) => {
   };
 
   return (
-    <div>
-      <h3>Create new</h3>
+    <Box mt={2}>
+      <Typography variant="h6">Create new</Typography>
       <form onSubmit={addBlog}>
-        <div>
-          title
-          <input
+        <Box mt={1}>
+          <TextField
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            id="title-input"
+            label="Title"
+            fullWidth
           />
-        </div>
-        <div>
-          author
-          <input
+        </Box>
+        <Box mt={1}>
+          <TextField
             value={author}
             onChange={(event) => setAuthor(event.target.value)}
-            id="author-input"
+            label="Author"
+            fullWidth
           />
-        </div>
-        <div>
-          url
-          <input
+        </Box>
+        <Box mt={1}>
+          <TextField
             value={url}
             onChange={(event) => setUrl(event.target.value)}
-            id="url-input"
+            label="URL"
+            fullWidth
           />
-        </div>
-        <button type="submit">create</button>
+        </Box>
+        <Box mt={2}>
+          <Button type="submit" variant="contained" color="primary">
+            Create
+          </Button>
+        </Box>
       </form>
-    </div>
+    </Box>
   );
 };
 

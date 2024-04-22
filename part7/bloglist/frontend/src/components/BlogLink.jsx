@@ -1,21 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import { Card, CardActionArea, Typography } from "@mui/material";
 
 const BlogLink = ({ blog }) => {
-  const blogStyle = {
-    paddingTop: 7,
-    paddingBottom: 7,
-    paddingLeft: 5,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
   return (
-    <div style={blogStyle}>
-      <Link to={`/blogs/${blog.id}`} key={blog.id}>
-        <b>{blog.title}</b> by {blog.author}
-      </Link>
-    </div>
+    <Card>
+      <CardActionArea component={RouterLink} to={`/blogs/${blog.id}`}>
+        <Typography variant="body1" sx={{ p: 1 }}>
+          <b>{blog.title}</b> by {blog.author}
+        </Typography>
+      </CardActionArea>
+    </Card>
   );
 };
 

@@ -37,13 +37,11 @@ const App = () => {
       <div>
         {currentUser === null ? (
           <>
-            <h2>Log in to BlogList App</h2>
             <Notification />
             <LoginForm />
           </>
         ) : (
           <>
-            <h1>BlogList App</h1>
             <NavigationBar />
             <Notification />
 
